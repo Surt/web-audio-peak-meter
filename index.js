@@ -9,6 +9,7 @@ var webAudioPeakMeter = (function() {
     dbRange: 48,
     dbTickSize: 6,
     maskTransition: '0.1s',
+    vertical: true
   };
   var tickWidth;
   var elementWidth;
@@ -16,7 +17,6 @@ var webAudioPeakMeter = (function() {
   var meterHeight;
   var meterWidth;
   var meterTop;
-  var vertical = true;
   var channelCount = 1;
   var channelMasks = [];
   var channelPeaks = [];
@@ -66,7 +66,7 @@ var webAudioPeakMeter = (function() {
     elementHeight = domElement.clientHeight;
     var meterElement = createContainerDiv(domElement);
     if (elementWidth > elementHeight) {
-      vertical = false;
+      options.vertical = false;
     }
     meterHeight = elementHeight - meterTop - options.borderSize;
     meterWidth = elementWidth - tickWidth - options.borderSize;
@@ -75,11 +75,11 @@ var webAudioPeakMeter = (function() {
                   meterTop, tickWidth);
     channelCount = meterNode.channelCount;
     var channelWidth = meterWidth / channelCount;
-    if (!vertical) {
+    if (!options.vertical) {
       channelWidth = meterHeight / channelCount;
     }
     var channelLeft = tickWidth;
-    if (!vertical) {
+    if (!options.vertical) {
       channelLeft = meterTop;
     }
     for (var i = 0; i < channelCount; i++) {
@@ -108,7 +108,7 @@ var webAudioPeakMeter = (function() {
   var createTicks = function(parent) {
     var numTicks = Math.floor(options.dbRange / options.dbTickSize);
     var dbTickLabel = 0;
-    if (vertical) {
+    if (options.vertical) {
       var dbTickTop = options.fontSize + options.borderSize;
       for (var i = 0; i < numTicks; i++) {
         var dbTick = document.createElement('div');
@@ -149,7 +149,7 @@ var webAudioPeakMeter = (function() {
     rainbow.style.height = height + 'px';
     rainbow.style.position = 'absolute';
     rainbow.style.top = top + 'px';
-    if (vertical) {
+    if (options.vertical) {
       rainbow.style.left = left + 'px';
       var gradientStyle = 'linear-gradient(to bottom, ' +
         options.gradient.join(', ') + ')';
@@ -170,7 +170,7 @@ var webAudioPeakMeter = (function() {
     label.style.fontSize = options.fontSize + 'px';
     label.style.position = 'absolute';
     label.textContent = '-∞';
-    if (vertical) {
+    if (options.vertical) {
       label.style.width = width + 'px';
       label.style.top = options.borderSize + 'px';
       label.style.left = left + 'px';
@@ -186,7 +186,7 @@ var webAudioPeakMeter = (function() {
     var channelMask = document.createElement('div');
     parent.appendChild(channelMask);
     channelMask.style.position = 'absolute';
-    if (vertical) {
+    if (options.vertical) {
       channelMask.style.width = width + 'px';
       channelMask.style.height = meterHeight + 'px';
       channelMask.style.top = top + 'px';
@@ -199,7 +199,7 @@ var webAudioPeakMeter = (function() {
     }
     channelMask.style.backgroundColor = options.backgroundColor;
     if (transition) {
-      if (vertical) {
+      if (options.vertical) {
         channelMask.style.transition = 'height ' + options.maskTransition;
       } else {
         channelMask.style.transition = 'width ' + options.maskTransition;
@@ -209,7 +209,7 @@ var webAudioPeakMeter = (function() {
   };
 
   var maskSize = function(floatVal) {
-    var meterDimension = vertical ? meterHeight : meterWidth;
+    var meterDimension = options.vertical ? meterHeight : meterWidth;
     if (floatVal === 0.0) {
       return meterDimension;
     } else {
@@ -250,7 +250,7 @@ var webAudioPeakMeter = (function() {
 
   var paintMeter = function() {
     for (var i = 0; i < channelCount; i++) {
-      if (vertical) {
+      if (options.vertical) {
         channelMasks[i].style.height = maskSizes[i] + 'px';
       } else {
         channelMasks[i].style.width = maskSizes[i] + 'px';
